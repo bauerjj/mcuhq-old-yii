@@ -18,6 +18,10 @@
 !/protected/controllers/
 !/protected/views/
 
+!/themes
+/themes/*
+!/themes/bootstrap/
+
 index.php
 index-test.php
 /protected/yiic.php
