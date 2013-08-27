@@ -13,6 +13,8 @@
 
 	<?php echo $form->textFieldRow($model,'userId',array('class'=>'span5')); ?>
 
+	<?php echo $form->textFieldRow($model,'categoryId',array('class'=>'span5')); ?>
+
 	<div class="form-actions">
 		<?php $this->widget('bootstrap.widgets.TbButton', array(
 			'buttonType'=>'submit',

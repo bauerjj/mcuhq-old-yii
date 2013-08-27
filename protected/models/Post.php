@@ -9,11 +9,15 @@
  * @property string $content
  * @property integer $statusId
  * @property integer $userId
+ * @property integer $categoryId
+ * @property string $created
+ * @property string $updated
  *
  * The followings are the available model relations:
  * @property Comment[] $comments
  * @property Status $status
  * @property User $user
+ * @property Category $category
  * @property TagPost[] $tagPosts
  */
 class Post extends CActiveRecord {
@@ -21,6 +25,7 @@ class Post extends CActiveRecord {
     const STATUS_DRAFT = 1;
     const STATUS_PUBLISHED = 2;
     const STATUS_ARCHIVED = 3;
+    const STATUS_PENDING = 4;
 
     /**
      * Returns the static model of the specified AR class.
@@ -29,13 +34,6 @@ class Post extends CActiveRecord {
      */
     public static function model($className = __CLASS__) {
         return parent::model($className);
-    }
-
-    public function getUrl() {
-        return Yii::app()->createUrl('post/view', array(
-                    'id' => $this->id,
-                    'title' => $this->title,
-        ));
     }
 
     /**
@@ -52,12 +50,12 @@ class Post extends CActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('statusId, userId', 'numerical', 'integerOnly' => true),
+            array('statusId, userId, categoryId', 'numerical', 'integerOnly' => true),
             array('title', 'length', 'max' => 255),
             array('content', 'safe'),
             // The following rule is used by search().
             // Please remove those attributes that should not be searched.
-            array('id, title, content, statusId, userId', 'safe', 'on' => 'search'),
+            array('id, title, content, statusId, userId, categoryId, created, updated', 'safe', 'on' => 'search'),
         );
     }
 
@@ -71,8 +69,8 @@ class Post extends CActiveRecord {
             'comments' => array(self::HAS_MANY, 'Comment', 'postId'),
             'status' => array(self::BELONGS_TO, 'Status', 'statusId'),
             'user' => array(self::BELONGS_TO, 'User', 'userId'),
+            'category' => array(self::BELONGS_TO, 'Category', 'categoryId'),
             'tagPosts' => array(self::HAS_MANY, 'TagPost', 'postId'),
-            //  'tags' => array(self::HAS_MANY, 'Tag', 'tagId', 'through' => 'tagPosts'), // CUSTOM
             'tags' => array(self::MANY_MANY, 'Tag', 'tag_post(postId, tagId)'), // CUSTOM
         );
     }
@@ -87,6 +85,9 @@ class Post extends CActiveRecord {
             'content' => 'Content',
             'statusId' => 'Status',
             'userId' => 'User',
+            'categoryId' => 'Category',
+            'created' => 'Created',
+	    'updated' => 'Updated',
         );
     }
 
@@ -105,10 +106,45 @@ class Post extends CActiveRecord {
         $criteria->compare('content', $this->content, true);
         $criteria->compare('statusId', $this->statusId);
         $criteria->compare('userId', $this->userId);
+        $criteria->compare('categoryId', $this->categoryId);
+        $criteria->compare('created',$this->created,true);
+        $criteria->compare('updated',$this->updated,true);
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
         ));
+    }
+
+    public function getUrl()
+    {
+        return Yii::app()->createUrl('post/view', array(
+            'id'=>$this->id,
+            'title'=>$this->title,
+        ));
+    }
+
+    //CUSTOM
+    protected function beforeSave() {
+        if (parent::beforeSave()) {
+            if ($this->isNewRecord) {
+                $this->created = $this->updated = date("Y-m-d H:i:s");
+                $this->userId = Yii::app()->user->id;
+            }
+            else
+                $this->updated = date("Y-m-d H:i:s");
+
+            return true;
+        }
+        else
+            return false;
+    }
+
+    public function getTags(){
+        $tags = array();
+        foreach($this->tags as $tag)
+            $tags[]= CHtml::encode($tag->name);
+
+        return implode(', ',$tags);
     }
 
     // CUSTOM for the esaverelatedbehavior extension

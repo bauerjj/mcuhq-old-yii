@@ -45,8 +45,14 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		'id',
 		'title',
 		'content',
-		'statusId',
+                'statusId',
+            array(
+                'name' => 'status',
+                'filter' => CHtml::activeTextField($model, 'status'),
+                'value' => '$data->status->status'
+            ),
 		'userId',
+		'categoryId',
 		array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',
 		),

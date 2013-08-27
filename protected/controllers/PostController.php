@@ -80,7 +80,6 @@ class PostController extends Controller {
      */
     public function actionUpdate($id) {
         $model = $this->loadModel($id);
-
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
 
@@ -118,12 +117,10 @@ class PostController extends Controller {
      */
     public function actionIndex() {
 
-
-
-        $post = Post::model()->findByPk(2);
-        // retrieve the post's author: a relational query will be performed here
-        $author = $post->user;
-        echo $author->username;
+        // $post = Post::model()->findByPk(1);
+//        // retrieve the post's author: a relational query will be performed here
+//        $author = $post->user;
+//        echo $author->username;
 //                $post = new Post;
 //
 //                $post->title = "test title";
@@ -132,11 +129,8 @@ class PostController extends Controller {
 //                $tag1->name = "cpu";
 //                $tag2 = new Tag;
 //                $tag2->name = "core";
-//
 //                $post->tags=array($tag1,$tag2);
-//
-//$post->withRelated->save(true,array('tags'));
-//                die;
+//                $post->withRelated->save(true,array('tags'));
 
 
         $dataProvider = new CActiveDataProvider('Post');
@@ -165,9 +159,20 @@ class PostController extends Controller {
      * @param integer the ID of the model to be loaded
      */
     public function loadModel($id) {
-        $model = Post::model()->findByPk($id);
+       // $model = Post::model()->findByPk($id);
+
+        //Custom
+        if (Yii::app()->user->isGuest) // Only show published or archived posts
+            $condition = 'status=' . Post::STATUS_PUBLISHED
+                    . ' OR status=' . Post::STATUS_ARCHIVED;
+        else
+            $condition = '';
+        $model = Post::model()->findByPk($id, $condition);
+
         if ($model === null)
             throw new CHttpException(404, 'The requested page does not exist.');
+
+
         return $model;
     }
 

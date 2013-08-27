@@ -8,20 +8,38 @@
 	<?php echo CHtml::encode($data->title); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('content')); ?>:</b>
-	<?php echo CHtml::encode($data->content); ?>
-	<br />
-
 	<b><?php echo CHtml::encode($data->getAttributeLabel('statusId')); ?>:</b>
-	<?php echo CHtml::encode($data->statusId); ?>
+	<?php echo CHtml::encode($data->status->status); // $data->statusId?>
 	<br />
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('userId')); ?>:</b>
-	<?php echo CHtml::encode($data->userId); ?>
+	<?php echo CHtml::encode($data->user->username); ?>
+	<br />
+
+	<b><?php echo CHtml::encode($data->getAttributeLabel('categoryId')); ?>:</b>
+	<?php echo CHtml::encode($data->category->name); ?>
+	<br />
+
+        <b><?php echo CHtml::encode($data->getAttributeLabel('created')); ?>:</b>
+	<?php echo CHtml::encode($data->created); ?>
+	<br />
+
+        <b><?php echo CHtml::encode($data->getAttributeLabel('updated')); ?>:</b>
+	<?php echo CHtml::encode($data->updated); ?>
 	<br />
 
         <b><?php echo CHtml::encode($data->getAttributeLabel('tags')); ?>:</b>
-	<?php foreach($data->tags as $tag) echo CHtml::encode($tag->name) . ','; ?>
+	<?php echo $data->getTags()?>
 	<br />
-<br /><br />
+
+        <b><?php echo CHtml::encode($data->getAttributeLabel('content')); ?>:</b>
+	<?php
+        $this->beginWidget('CMarkdown');
+        echo CHtml::encode($data->content);
+        $this->endWidget();
+
+        ?>
+	<br />
+
+
 </div>
