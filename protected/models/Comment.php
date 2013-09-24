@@ -7,18 +7,21 @@
  * @property integer $id
  * @property string $content
  * @property integer $postId
- * @property string $author
- * @property string $email
+ * @property integer $userId
  * @property integer $statusId
+ * @property string $created
  *
  * The followings are the available model relations:
  * @property Status $status
+ * @property User $user
  * @property Post $post
  */
 class Comment extends CActiveRecord {
 
     const STATUS_PENDING = 1;
     const STATUS_APPROVED = 2;
+    const VOTE_UP = 1;
+    const VOTE_DOWN = 2;
 
     /**
      * Returns the static model of the specified AR class.
@@ -43,12 +46,12 @@ class Comment extends CActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('postId, statusId', 'numerical', 'integerOnly' => true),
-            array('author, email', 'length', 'max' => 50),
-            array('content', 'safe'),
+            array('content', 'required'),
+            //  array('author, email', 'length', 'max' => 50),
+            // array('email', 'email'), // 'email' row must be a valid email entry
             // The following rule is used by search().
             // Please remove those attributes that should not be searched.
-            array('id, content, postId, author, email, statusId', 'safe', 'on' => 'search'),
+            array('id, content, postId, userId, statusId', 'safe', 'on' => 'search'),
         );
     }
 
@@ -59,7 +62,11 @@ class Comment extends CActiveRecord {
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
         return array(
+            'votes' => array(self::HAS_MANY, 'CommentVote', 'commentId'),
+            'voteUpCount' => array(self::STAT, 'CommentVote', 'commentId', 'condition' => 'up = 1'),
+            'voteDownCount' => array(self::STAT, 'CommentVote', 'commentId', 'condition' => 'down = 1'),
             'status' => array(self::BELONGS_TO, 'Status', 'statusId'),
+            'user' => array(self::BELONGS_TO, 'User', 'userId'),
             'post' => array(self::BELONGS_TO, 'Post', 'postId'),
         );
     }
@@ -72,9 +79,8 @@ class Comment extends CActiveRecord {
             'id' => 'ID',
             'content' => 'Content',
             'postId' => 'Post',
-            'author' => 'Author',
-            'email' => 'Email',
             'statusId' => 'Status',
+            'created' => 'Created',
         );
     }
 
@@ -91,8 +97,7 @@ class Comment extends CActiveRecord {
         $criteria->compare('id', $this->id);
         $criteria->compare('content', $this->content, true);
         $criteria->compare('postId', $this->postId);
-        $criteria->compare('author', $this->author, true);
-        $criteria->compare('email', $this->email, true);
+        $criteria->compare('userId', $this->userId);
         $criteria->compare('statusId', $this->statusId);
 
         return new CActiveDataProvider($this, array(
@@ -102,9 +107,108 @@ class Comment extends CActiveRecord {
 
     // CUSTOM for the esaverelatedbehavior extension
     public function behaviors() {
-        return array('ESaveRelatedBehavior' => array(
-                'class' => 'application.components.ESaveRelatedBehavior')
+        return array(
+            'withRelated' => array(
+                'class' => 'ext.wr.WithRelatedBehavior',
+            ),
         );
+    }
+
+    protected function beforeSave() {
+        if (parent::beforeSave()) {
+            if ($this->isNewRecord)
+                $this->created = date("Y-m-d H:i:s");
+            return true;
+        }
+        else
+            return false;
+    }
+
+    /**
+     * @param Post the post that this comment belongs to. If null, the method
+     * will query for the post.
+     * @return string the permalink URL for this comment
+     */
+    public function getUrl($post = null) {
+        if ($post === null)
+            $post = $this->post;
+        return $post->url . '#c' . $this->id;
+    }
+
+    /**
+     * Adds a vote either up or down to a certain comment. User must be
+     * logged in for the voting mechanism to function properly
+     *
+     * @param int $commentId Comment to vote on
+     * @return boolean if added or not
+     */
+    public function addVote($commentId, $up = true) {
+        $userId = Yii::app()->user->id;
+        $criteria = new CDbCriteria();
+        $criteria->condition = "commentId = $commentId";
+        $criteria->addCondition("userId = $userId");
+        $criteria->limit = 1; // Only need 1 record to search for
+        $row = CommentVote::model()->find($criteria);
+
+
+        if (!$row) { // Check if existance of a vote
+            // Add vote then if not exists
+            $cm = new CommentVote();
+            $cm->userId = $userId;
+            $cm->commentId = $commentId;
+            if ($up) {
+                $cm->up = 1;
+                $cm->down = 0;
+            } else {
+                $cm->up = 0;
+                $cm->down = 1;
+            }
+            return $cm->save();
+        }
+        else{
+            // Modify existing row ONLY if the current vote does not match the intended!!!
+            // Example, Allow user to modify previous vote
+            if($up && $row->up == 1)
+                return false; // error
+            else if(!$up && $row->down == 1)
+                return false; // error
+
+            // Enter here when user has changed previous vote
+            if ($up) {
+                $row->up = 1;
+                $row->down = 0;
+            } else {
+                $row->up = 0;
+                $row->down = 1;
+            }
+            return $row->save();
+        }
+    }
+
+    /**
+     * Checks to see if the user has voted up already for a given comment
+     * @todo may want to optimize this with a query instead of looping through all of the votes
+     */
+    public function hasVotedUp() {
+        foreach ($this->votes as $votes) {
+            if ($votes->commentId == $this->id && $votes->userId == Yii::app()->user->id && $votes->up == 1)
+                return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks to see if the user has voted down already for a given comment
+     * @todo may want to optimize this with a query instead of looping through all of the votes
+     */
+    public function hasVotedDown() {
+        foreach ($this->votes as $votes) {
+            if ($votes->commentId == $this->id && $votes->userId == Yii::app()->user->id && $votes->down == 1)
+                return true;
+        }
+
+        return false;
     }
 
 }

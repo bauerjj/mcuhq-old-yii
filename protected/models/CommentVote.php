@@ -1,22 +1,25 @@
 <?php
 
 /**
- * This is the model class for table "category".
+ * This is the model class for table "comment_vote".
  *
- * The followings are the available columns in table 'category':
+ * The followings are the available columns in table 'comment_vote':
  * @property integer $id
- * @property string $name
- * @property integer $count
+ * @property integer $commentId
+ * @property integer $userId
+ * @property integer $up
+ * @property integer $down
  *
  * The followings are the available model relations:
- * @property Post[] $posts
+ * @property User $id0
+ * @property Comment $comment
  */
-class Category extends CActiveRecord
+class CommentVote extends CActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
-	 * @return Category the static model class
+	 * @return CommentVote the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -28,7 +31,7 @@ class Category extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'category';
+		return 'comment_vote';
 	}
 
 	/**
@@ -39,10 +42,10 @@ class Category extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name', 'length', 'max'=>255),
+			array('commentId, userId, up, down', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, name', 'safe', 'on'=>'search'),
+			array('id, commentId, userId, up, down', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -54,7 +57,8 @@ class Category extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'posts' => array(self::HAS_MANY, 'Post', 'categoryId'),
+			'id0' => array(self::BELONGS_TO, 'User', 'id'),
+			'comment' => array(self::BELONGS_TO, 'Comment', 'commentId'),
 		);
 	}
 
@@ -65,8 +69,10 @@ class Category extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'name' => 'Name',
-			'count' => 'Count',
+			'commentId' => 'Comment',
+			'userId' => 'User',
+			'up' => 'Up',
+			'down' => 'Down',
 		);
 	}
 
@@ -82,7 +88,10 @@ class Category extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
-		$criteria->compare('name',$this->name,true);
+		$criteria->compare('commentId',$this->commentId);
+		$criteria->compare('userId',$this->userId);
+		$criteria->compare('up',$this->up);
+		$criteria->compare('down',$this->down);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

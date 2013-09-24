@@ -12,6 +12,7 @@
  * @property integer $categoryId
  * @property string $created
  * @property string $updated
+ * @property integer $views
  *
  * The followings are the available model relations:
  * @property Comment[] $comments
@@ -67,6 +68,7 @@ class Post extends CActiveRecord {
         // class name for the relations automatically generated below.
         return array(
             'comments' => array(self::HAS_MANY, 'Comment', 'postId'),
+            'commentCount' => array(self::STAT, 'Comment', 'postId', 'condition'=>'statusId='.Comment::STATUS_APPROVED),
             'status' => array(self::BELONGS_TO, 'Status', 'statusId'),
             'user' => array(self::BELONGS_TO, 'User', 'userId'),
             'category' => array(self::BELONGS_TO, 'Category', 'categoryId'),
@@ -88,6 +90,7 @@ class Post extends CActiveRecord {
             'categoryId' => 'Category',
             'created' => 'Created',
 	    'updated' => 'Updated',
+	    'views' => 'Views',
         );
     }
 
@@ -139,10 +142,32 @@ class Post extends CActiveRecord {
             return false;
     }
 
-    public function getTags(){
+    /**
+     * Adds a new comment to this post.
+     * This method will set status and post_id of the comment accordingly.
+     * @param Comment the comment to be added with attributes already added!!!
+     * @return boolean whether the comment is saved successfully
+     */
+    public function addComment($comment){
+        if(Yii::app()->params['commentNeedApproval'])
+            $comment->statusId = Comment::STATUS_PENDING;
+        else
+            $comment->statusId = Comment::STATUS_APPROVED;
+
+        $comment->postId = $this->id; // Save postID to currently viewed post
+        $comment->userId = Yii::app()->user->id;
+
+        return $comment->save();
+    }
+
+    public function getTags($class = false){
         $tags = array();
-        foreach($this->tags as $tag)
-            $tags[]= CHtml::encode($tag->name);
+        foreach($this->tags as $tag){
+            if($class)
+                $tags[]= CHtml::link('<span class="label label-info">'.CHtml::encode($tag->name), '#');
+            else
+                $tags[]= CHtml::encode($tag->name);
+        }
 
         return implode(', ',$tags);
     }

@@ -1,8 +1,8 @@
 <?php
 
-class TagCloud extends CWidget {
+class People extends CWidget {
 
-    public $title = 'Popular Tags';
+    public $title = 'Top Contributers';
     private $maxTags = 20;
 
     public function init() {
@@ -18,12 +18,14 @@ class TagCloud extends CWidget {
             'htmlOptions' => array('class' => '')
         ));
 
-
         echo '<ul class="unstyled">';
         foreach ($tags as $tag) {
             $link = CHtml::link(CHtml::encode($tag->name), array('post/index', 'tag' => $tag->name));
-            echo '<li>' . '<a href="#"><span class="label label-info">' . $tag->name . '</span></a>'.
-                    '<span class="item-multiplier">x 1</span>'. '</li>';
+            echo '<li>' .CHtml::tag('span', array('class' => 'label',),'<i class="icon-white icon-user"></i>'. $link ).'</a></li>';
+       //     echo '<li><a href="/admin.php">Admin CP <span class="badge badge-inverse">1</span> </a></li>';
+//            echo CHtml::tag('span', array(
+//                'class' => 'tag',
+//                    ), $link) . "\n";
         }
         echo '</ul>';
 

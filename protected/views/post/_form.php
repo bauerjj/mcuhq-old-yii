@@ -16,20 +16,20 @@ $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 
 $baseUrl = Yii::app()->baseUrl;
 $cs = Yii::app()->getClientScript();
-
-// Use the bootstrap sources in the extensions folder
-$assetsPath = Yii::getPathOfAlias('bootstrap.assets');
-$assetsUrl = Yii::app()->assetManager->publish($assetsPath, true, -1, false);
-
-
-$cs->registerScriptFile($baseUrl . '/js/Markdown.Converter.js');
-$cs->registerScriptFile($baseUrl . '/js/Markdown.Sanitizer.js');
-$cs->registerScriptFile($baseUrl . '/js/Markdown.Editor.js');
-$cs->registerScriptFile($baseUrl . '/js/less-1.4.1.min.js');
+//
+//// Use the bootstrap sources in the extensions folder
+//$assetsPath = Yii::getPathOfAlias('bootstrap.assets');
+//$assetsUrl = Yii::app()->assetManager->publish($assetsPath, true, -1, false);
+//
+//
+//$cs->registerScriptFile($baseUrl . '/js/Markdown.Converter.js');
+//$cs->registerScriptFile($baseUrl . '/js/Markdown.Sanitizer.js');
+//$cs->registerScriptFile($baseUrl . '/js/Markdown.Editor.js');
+//$cs->registerScriptFile($baseUrl . '/js/less-1.4.1.min.js');
 
 // Use the LESS CSS extension when including .LESS files since it must be
 // included using the special keyword: 'type = "stylesheet/less"'
-$cs->registerLessFile($baseUrl . '/js/Markdown.Editor.less');
+//$cs->registerLessFile($baseUrl . '/js/Markdown.Editor.less');
 //$cs->registerLessFile($assetsUrl.'/less/bootstrap.less');
 
 $cs->registerScriptFile('https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js');
@@ -87,26 +87,24 @@ foreach ($categories as $cat)
 
 
 <br/>
-<?php echo CHtml::encode($model->getAttributeLabel('tags')); ?>
-
-<ul id="myTags">
-    <?php //Tags
-    $allTags = Tag::model()->findAll(); // Get all of the tags
+<?php
+$allTags = Tag::model()->findAll(); // Get all of the tags
+$allTagss = array();
     foreach($allTags as $tag){
         $allTagss[$tag->id] = $tag->name;
     }
-    foreach ($model->tags as $tag):
-    ?>
-    <li><?php echo $tag->name ?></li>
 
-    <?php endforeach ?>
-</ul>
+    $currentTags = array();
+    foreach($model->tags as $tag)
+        $currentTags []= $tag->name;
+     ?>
 
-<div class="wmd-panel">
-    <div id="wmd-button-bar"></div>
-<?php echo $form->textAreaRow($model, 'content', array('rows' => 6, 'cols' => 50, 'class' => 'span8', 'wmd-input', 'id' => 'wmd-input')); ?>
-    <div id="wmd-preview" class="wmd-panel wmd-preview"></div>
-</div>
+
+<?php echo $form->textFieldRow(Tag::model(), 'tags', array('id' => 'singleFieldTags2', 'value' => implode(',',$currentTags), 'class' => 'span5', 'maxlength' => 255)); ?>
+
+<?php echo CHtml::link('Markdown Syntax Help', '#'); ?>
+<?php echo $form->markdownEditorRow($model, 'content', array('height'=>'200px', 'rows' => 6, 'cols' => 50));?>
+
 <div class="form-actions">
 <?php
 $this->widget('bootstrap.widgets.TbButton', array(
@@ -130,7 +128,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
         //-------------------------------
         // Preloading data in markup
         //-------------------------------
-        $('#myTags').tagit({
+        $('#singleFieldTags2').tagit({
             availableTags: sampleTags, // this param is of course optional. it's for autocomplete.
             // configure the name of the input field (will be submitted with form), default: item[tags]
             itemName: 'item',
@@ -138,27 +136,4 @@ $this->widget('bootstrap.widgets.TbButton', array(
         });
     });
 
-    (function() {
-        var converter1 = Markdown.getSanitizingConverter();
-        var editor1 = new Markdown.Editor(converter1);
-        editor1.run();
-
-        var converter2 = new Markdown.Converter();
-
-        converter2.hooks.chain("preConversion", function(text) {
-            return text.replace(/\b(a\w*)/gi, "*$1*");
-        });
-
-        converter2.hooks.chain("plainLinkText", function(url) {
-            return "This is a link to " + url.replace(/^https?:\/\//, "");
-        });
-
-        var help = function() {
-            alert("Do you need help?");
-        }
-
-        var editor2 = new Markdown.Editor(converter2, "-second", {handler: help});
-
-        editor2.run();
-    })();
 </script>
