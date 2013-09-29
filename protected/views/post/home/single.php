@@ -88,10 +88,9 @@ $this->renderPartial('home/_view', array(
         <li><a href="#" style="text-decoration: none; "><i class="icon-thumbs-down vote-down" title="Lowest Rated First"></i><strong>Lowest Rated</strong></a></li>
     </ul>
 
-        <?php
-        $this->renderPartial('home/_comments', array(
-            'post' => $model,
-            'comments' => $model->comments,
+<?php
+        $this->widget('ThreadedComments',array(
+            'comments' => $comments,
         ));
         ?>
 <?php endif; ?>
@@ -128,7 +127,7 @@ If you have any questions, please ask in the '.CHtml::link('forum',array('/forum
         <?php else: ?>
             <?php
             $this->renderPartial('/comment/_form', array(
-                'model' => $comment,
+                'model' => $newComment,
             ));
             ?>
     <?php endif; ?>
@@ -136,18 +135,18 @@ If you have any questions, please ask in the '.CHtml::link('forum',array('/forum
 <?php endif ?>
 
 <?php
-echo '<div id="test">foo bar</div>';
-
-echo CHtml::ajaxLink ("Update data",
-   CController::createUrl('post/vote'),
-   array(
-       'type' => 'POST',
-       'data' =>array(
-           'crAction'=>'updateShareFlag'
-       ),
-       'update' => '#test'
-       )
-  );
+//echo '<div id="test">foo bar</div>';
+//
+//echo CHtml::ajaxLink ("Update data",
+//   CController::createUrl('post/vote'),
+//   array(
+//       'type' => 'POST',
+//       'data' =>array(
+//           'crAction'=>'updateShareFlag'
+//       ),
+//       'update' => '#test'
+//       )
+//  );
 
 ?>
 </div><!-- comments -->

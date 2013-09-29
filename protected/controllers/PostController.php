@@ -55,7 +55,8 @@ class PostController extends Controller {
 
         $this->render('home/single', array(
             'model' => $this->loadModel($id),
-            'comment' => $comment,
+            'newComment' => $comment,
+            'comments' => $this->loadModel($id)->comments,
         ));
 
 
@@ -233,7 +234,13 @@ class PostController extends Controller {
     }
 
     public function actionVote() {
-        // Only allow users to vote
+        // Only allow users to vote - Non-users will be redirected to a login page
+        if(Yii::app()->user->isGuest){
+           echo json_encode(array('error' => true, 'redirect' => CController::createUrl('site/login') ));
+            return;
+        }
+
+
         if (isset($_POST['crAction'])) {
             if ($_POST['crAction'] == 'voteCommentUp' || $_POST['crAction'] == 'voteCommentDown') {
                 $commentId = $_POST['commentId'];
@@ -255,7 +262,6 @@ class PostController extends Controller {
 
             }
         }
-        // Non-users will be redirected to a login page
     }
 
     /**

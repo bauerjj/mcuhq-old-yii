@@ -152,7 +152,7 @@ class Comment extends CActiveRecord {
 
 
         if (!$row) { // Check if existance of a vote
-            // Add vote then if not exists
+            // Add vote if row does not exist
             $cm = new CommentVote();
             $cm->userId = $userId;
             $cm->commentId = $commentId;
@@ -164,22 +164,21 @@ class Comment extends CActiveRecord {
                 $cm->down = 1;
             }
             return $cm->save();
-        }
-        else{
-            // Modify existing row ONLY if the current vote does not match the intended!!!
-            // Example, Allow user to modify previous vote
-            if($up && $row->up == 1)
-                return false; // error
-            else if(!$up && $row->down == 1)
-                return false; // error
-
-            // Enter here when user has changed previous vote
-            if ($up) {
-                $row->up = 1;
+        } else {
+            if (($up && $row->up == 1) || (!$up && $row->down == 1)) {
+                // Enter here when user wishes to toggle the vote (pressed thumbs up after previously voted up)
+                // Reset votes
+                $row->up = 0;
                 $row->down = 0;
             } else {
-                $row->up = 0;
-                $row->down = 1;
+                // Enter here when user has changed previous vote from Up to Down or vice versa
+                if ($up) {
+                    $row->up = 1;
+                    $row->down = 0;
+                } else {
+                    $row->up = 0;
+                    $row->down = 1;
+                }
             }
             return $row->save();
         }
@@ -190,6 +189,8 @@ class Comment extends CActiveRecord {
      * @todo may want to optimize this with a query instead of looping through all of the votes
      */
     public function hasVotedUp() {
+         if(Yii::app()->user->isGuest)
+            return false;
         foreach ($this->votes as $votes) {
             if ($votes->commentId == $this->id && $votes->userId == Yii::app()->user->id && $votes->up == 1)
                 return true;
@@ -203,11 +204,12 @@ class Comment extends CActiveRecord {
      * @todo may want to optimize this with a query instead of looping through all of the votes
      */
     public function hasVotedDown() {
+        if(Yii::app()->user->isGuest)
+            return false;
         foreach ($this->votes as $votes) {
             if ($votes->commentId == $this->id && $votes->userId == Yii::app()->user->id && $votes->down == 1)
                 return true;
         }
-
         return false;
     }
 
