@@ -278,6 +278,10 @@ class PostController extends Controller {
         ));
     }
 
+    public function actionFilter(){
+
+    }
+
     /**
      * Creates a new comment.
      * This method attempts to create a new comment based on the user input.
