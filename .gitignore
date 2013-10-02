@@ -22,7 +22,7 @@
 /themes/*
 !/themes/bootstrap/
 
-index.php
+#index.php
 index-test.php
 /protected/yiic.php
 /protected/.htaccess

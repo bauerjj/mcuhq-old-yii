@@ -25,7 +25,7 @@ class PostController extends Controller {
     public function accessRules() {
         return array(
             array('allow', // allow all users to perform 'index' and 'view' actions
-                'actions' => array('index', 'view', 'home', 'vote'),
+                'actions' => array('index', 'view', 'home', 'vote', 'filter'),
                 'users' => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -278,8 +278,54 @@ class PostController extends Controller {
         ));
     }
 
+    /**
+     * Enter here when filtering the vendor/family/micro
+     */
     public function actionFilter(){
+        //if (isset($_POST['ajax'])){
+        if (true){
+            // Get the family data
+            $family = Family::model()->findAll('vendorId=:vendorId',
+                    array(':vendorId' => (int) $_POST['vendorId']));
+            $family = CHtml::listData($family,'id','name');
 
+            //Create the dropdown for family
+            $familyId = (int)$_POST['familyId'];
+            if($familyId == '')
+                $familyDropDown = '<option value="" selected="selected"></option>';
+            else
+                $familyDropDown = '<option value=""></option>';
+            foreach($family as $id=>$name){
+                if(!($id == $familyId))
+                    $familyDropDown .= CHtml::tag('option', array('value'=>$id),CHtml::encode($name),true);
+                else
+                    $familyDropDown .= CHtml::tag('option', array('value'=>$id, 'selected' => '"selected"'),CHtml::encode($name),true);
+            }
+
+            // Create the dropdown for Micro
+            $microId = (int)$_POST['microId'];
+            if($microId == '')
+                $microDropDown = '<option value="" selected="selected"></option>';
+            else
+                $microDropDown = '<option value=""></option>';
+            $micro = Micro::model()->findAll('familyId=:familyId',
+                    array(':familyId' => (int) $_POST['familyId']));
+            $micro = CHtml::listData($micro,'id','name');
+
+            //Create the dropdown for micro
+            foreach($micro as $id=>$name){
+                if(!($id == $microId))
+                    $microDropDown .= CHtml::tag('option', array('value'=>$id),CHtml::encode($name),true);
+                else
+                    $microDropDown .= CHtml::tag('option', array('value'=>$id, 'selected' => '"selected"'),CHtml::encode($name),true);
+            }
+
+
+            echo CJSON::encode(array(
+              'family'=>$familyDropDown,
+              'micro'=>$microDropDown,
+            ));
+        }
     }
 
     /**
