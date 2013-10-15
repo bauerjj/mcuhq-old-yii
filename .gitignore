@@ -17,6 +17,7 @@
 !/protected/models/
 !/protected/controllers/
 !/protected/views/
+!/protected/modules/
 
 !/themes
 /themes/*
@@ -26,3 +27,4 @@
 index-test.php
 /protected/yiic.php
 /protected/.htaccess
+!/css/custom.css
