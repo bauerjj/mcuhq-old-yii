@@ -50,14 +50,14 @@ $html = ob_get_clean(); ?>
                                 array('label' => 'Report a Bug', 'url' => 'https://github.com/mcuhq/mcuhq/issues/new', 'icon' => 'icon-wrench'),
                                 array('label' => 'Report a Security Issue', 'url' => '#', 'icon' => 'icon-warning-sign'),
                             )),
-                        array('label' => 'Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest), 'items'=>array(
+                        array('label' => 'Login/Register', 'url' => Yii::app()->getModule('user')->loginUrl, 'visible' => Yii::app()->user->isGuest), 'items'=>array(
                             array($html)
                         ),
                         array('label' => 'Welcome, ' . Yii::app()->user->name, 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest, 'icon' => 'user white', 'items' => array(
-                                array('label' => 'Profile', 'url' => '#', 'icon' => 'cog'),
+                                array('label' => Yii::app()->getModule('user')->t("Profile"), 'url' => Yii::app()->getModule('user')->profileUrl, 'icon' => 'cog'),
                                 array('label' => 'Contact Support', 'url' => '#', 'icon' => 'envelope'),
                                 '---',
-                                array('label' => 'Logout', 'url' => array('site/logout'), 'icon' => 'off'),
+                                array('label' => 'Logout', 'url' => Yii::app()->getModule('user')->logoutUrl, 'icon' => 'off'),
                             )),
                     ),
                 ),
