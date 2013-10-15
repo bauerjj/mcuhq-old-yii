@@ -25,7 +25,7 @@
             <div class="span12">
                 <p></p>
                 <p>
-                    <i class="icon-user"></i> by <a href="#"><?php echo CHtml::encode($data->user->username) ?></a>
+                    <i class="icon-user"></i> by <a href="#"><?php echo CHtml::link(CHtml::encode($data->user->username),array('user/user/view','id'=>$data->user->id)) ?></a>
                     |  <span class="badge badge-success"><i class="icon-calendar "></i><?php echo date('F j, Y', strtotime($data->created)); ?></span>
                     | <i class="icon-comment"></i> <a href="#">3 Comments</a>
                     | <i class="icon-thumbs-up"></i> <span style="color: green">200</span>
