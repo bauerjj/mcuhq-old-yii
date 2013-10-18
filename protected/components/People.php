@@ -17,6 +17,7 @@ class People extends CWidget {
             'headerIcon' => '',
             'htmlOptions' => array('class' => '')
         ));
+        echo CHtml::link('List of Users', Yii::app()->createUrl('user'));
 
         echo '<ul class="unstyled">';
         foreach ($tags as $tag) {
