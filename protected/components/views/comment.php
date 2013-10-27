@@ -47,9 +47,9 @@
                         'crAction' => 'voteComment',
                         'commentId' => $comment->id,
                     ),
-                    'update' => '#test'
-                        ), array('title' => 'Report This', 'style' => 'text-decoration: none')
-                );
+                  //  'update' => '#test' 
+                  //      ), array('title' => 'Report This', 'style' => 'text-decoration: none')
+                ));
                 ?>
             </li>
         </ul>
