@@ -8,11 +8,9 @@ A user driven collaboration that is dedicated exclusively to microcontroller pro
 - [tag-it](https://github.com/aehlke/tag-it)
 - [pagedown](http://code.google.com/p/pagedown/wiki/PageDown)
 - [github buttons](https://github.com/mdo/github-buttons)
- - [github jquery repo widget](https://github.com/JoelSutherland/GitHub-jQuery-Repo-Widget)
+- [github jquery repo widget](https://github.com/JoelSutherland/GitHub-jQuery-Repo-Widget)
+- [fonte awesome v4.0.1](http://fortawesome.github.io/Font-Awesome/)
 
 **Yii Extensions:**
-- [yii booster v2.0.0] (http://yiibooster.clevertech.biz/index.html)
-- [yii bootstrap 2.1.0] (http://www.yiiframework.com/extension/bootstrap/)
-- [WithRelatedBehavior v0.6.1](http://yiiext.github.io/extensions/with-related-behavior/)
-- [yii-less-extension v1.0.0](http://www.yiiframework.com/extension/less/)
-- [select2-20130215] (http://www.yiiframework.com/extension/select2/)  
+- [Yiistrap v1.2.0] (http://www.getyiistrap.com/site/index#.Um9TjxD3NOM)
+- [YiiWheels v1.0.3] (http://yiiwheels.2amigos.us/site/index)
