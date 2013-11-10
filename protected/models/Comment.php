@@ -106,13 +106,13 @@ class Comment extends CActiveRecord {
     }
 
     // CUSTOM for the esaverelatedbehavior extension
-    public function behaviors() {
-        return array(
-            'withRelated' => array(
-                'class' => 'ext.wr.WithRelatedBehavior',
-            ),
-        );
-    }
+//    public function behaviors() {
+//        return array(
+//            'withRelated' => array(
+//                'class' => 'ext.wr.WithRelatedBehavior',
+//            ),
+//        );
+//    }
 
     protected function beforeSave() {
         if (parent::beforeSave()) {
@@ -143,45 +143,7 @@ class Comment extends CActiveRecord {
      * @return boolean if added or not
      */
     public function addVote($commentId, $up = true) {
-        $userId = Yii::app()->user->id;
-        $criteria = new CDbCriteria();
-        $criteria->condition = "commentId = $commentId";
-        $criteria->addCondition("userId = $userId");
-        $criteria->limit = 1; // Only need 1 record to search for
-        $row = CommentVote::model()->find($criteria);
-
-
-        if (!$row) { // Check if existance of a vote
-            // Add vote if row does not exist
-            $cm = new CommentVote();
-            $cm->userId = $userId;
-            $cm->commentId = $commentId;
-            if ($up) {
-                $cm->up = 1;
-                $cm->down = 0;
-            } else {
-                $cm->up = 0;
-                $cm->down = 1;
-            }
-            return $cm->save();
-        } else {
-            if (($up && $row->up == 1) || (!$up && $row->down == 1)) {
-                // Enter here when user wishes to toggle the vote (pressed thumbs up after previously voted up)
-                // Reset votes
-                $row->up = 0;
-                $row->down = 0;
-            } else {
-                // Enter here when user has changed previous vote from Up to Down or vice versa
-                if ($up) {
-                    $row->up = 1;
-                    $row->down = 0;
-                } else {
-                    $row->up = 0;
-                    $row->down = 1;
-                }
-            }
-            return $row->save();
-        }
+       return Vote::addVote(CommentVote::model(), $commentId, $up);
     }
 
     /**
@@ -189,14 +151,7 @@ class Comment extends CActiveRecord {
      * @todo may want to optimize this with a query instead of looping through all of the votes
      */
     public function hasVotedUp() {
-         if(Yii::app()->user->isGuest)
-            return false;
-        foreach ($this->votes as $votes) {
-            if ($votes->commentId == $this->id && $votes->userId == Yii::app()->user->id && $votes->up == 1)
-                return true;
-        }
-
-        return false;
+        return Vote::hasVotedUp($this->votes, $this->id);
     }
 
     /**
@@ -204,13 +159,7 @@ class Comment extends CActiveRecord {
      * @todo may want to optimize this with a query instead of looping through all of the votes
      */
     public function hasVotedDown() {
-        if(Yii::app()->user->isGuest)
-            return false;
-        foreach ($this->votes as $votes) {
-            if ($votes->commentId == $this->id && $votes->userId == Yii::app()->user->id && $votes->down == 1)
-                return true;
-        }
-        return false;
+       return Vote::hasVotedDown($this->votes, $this->id);
     }
 
 }
