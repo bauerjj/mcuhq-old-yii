@@ -12,7 +12,7 @@ class Categories extends CWidget {
 
         $categories = Category::model()->findAll($criteria);
 
-        $this->beginWidget('bootstrap.widgets.TbBox', array(
+        $this->beginWidget('yiiwheels.widgets.box.WhBox', array(
             'title' => 'Categories',
             'headerIcon' => '',
             'htmlOptions' => array('class' => '')

@@ -12,7 +12,7 @@ class People extends CWidget {
 
         $tags = Tag::model()->findAll($criteria);
 
-        $this->beginWidget('bootstrap.widgets.TbBox', array(
+        $this->beginWidget('yiiwheels.widgets.box.WhBox', array(
             'title' => $this->title,
             'headerIcon' => '',
             'htmlOptions' => array('class' => '')
