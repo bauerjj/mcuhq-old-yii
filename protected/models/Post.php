@@ -51,12 +51,17 @@ class Post extends CActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('statusId, userId, categoryId', 'numerical', 'integerOnly' => true),
+            array('categoryId', 'numerical', 'integerOnly' => true),
             array('title', 'length', 'max' => 255),
-            array('content', 'safe'),
+           // array('content', 'safe'),
+            array('title, content, categoryId', 'required'),
             // The following rule is used by search().
             // Please remove those attributes that should not be searched.
             array('id, title, content, statusId, userId, categoryId, created, updated', 'safe', 'on' => 'search'),
+
+            //These are NOT user inputs - Place these in 'beforeSave' method
+           // array('userId', 'default', 'value' => Yii::app()->user->id),
+           // array('statusId', 'default', 'value' => '1')
         );
     }
 
@@ -131,10 +136,12 @@ class Post extends CActiveRecord {
         if (parent::beforeSave()) {
             if ($this->isNewRecord) {
                 $this->created = $this->updated = date("Y-m-d H:i:s");
-                $this->userId = Yii::app()->user->id;
+                $this->userId = Yii::app()->user->id; // Default value
             }
             else
                 $this->updated = date("Y-m-d H:i:s");
+
+            $this->statusId = STATUS_PUBLISHED; // Default value
 
             return true;
         }
@@ -173,12 +180,12 @@ class Post extends CActiveRecord {
     }
 
     // CUSTOM for the esaverelatedbehavior extension
-    public function behaviors() {
-        return array(
-            'withRelated' => array(
-                'class' => 'ext.wr.WithRelatedBehavior',
-            ),
-        );
-    }
+//    public function behaviors() {
+//        return array(
+//            'withRelated' => array(
+//                'class' => 'ext.wr.WithRelatedBehavior',
+//            ),
+//        );
+//    }
 
 }
