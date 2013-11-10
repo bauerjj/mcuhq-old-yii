@@ -2,6 +2,8 @@
 
 class SiteController extends Controller {
 
+    public $layout='main';
+
     /**
      * Declares class-based actions.
      */
@@ -20,6 +22,12 @@ class SiteController extends Controller {
         );
 
 
+    }
+
+    /**
+     * @return array action filters
+     */
+    public function filters() {
     }
 
     public function actionList() {
@@ -42,6 +50,11 @@ class SiteController extends Controller {
             'dataProvider' => $dataProvider,
         ));
     }
+
+	public function actionForums(){
+
+		$this->render('index');
+	}
 
     /**
      * This is the default 'index' action that is invoked
