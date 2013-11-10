@@ -12,9 +12,6 @@ class PostController extends Controller {
      * @return array action filters
      */
     public function filters() {
-        return array(
-            'accessControl', // perform access control for CRUD operations
-        );
     }
 
     /**
@@ -54,9 +51,9 @@ class PostController extends Controller {
 
 
         $this->render('home/single', array(
-            'model' => $this->loadModel($id),
+            'model' => $post,
             'newComment' => $comment,
-            'comments' => $this->loadModel($id)->comments,
+            'comments' => $post->comments,
         ));
 
 
@@ -70,6 +67,10 @@ class PostController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      */
     public function actionCreate() {
+
+        $this->layout = '//layouts/main';
+
+
         $model = new Post;
 
         // Uncomment the following line if AJAX validation is needed
@@ -189,7 +190,7 @@ class PostController extends Controller {
     public function actionHome() {
         $critera = new CDbCriteria(array(
             'order' => 'updated DESC',
-            'with' => 'tags'
+            'with' => array('tags', 'commentCount')
         ));
 
         $dataProvider = new CActiveDataProvider('Post', array(
@@ -235,8 +236,8 @@ class PostController extends Controller {
 
     public function actionVote() {
         // Only allow users to vote - Non-users will be redirected to a login page
-        if(Yii::app()->user->isGuest){
-           echo json_encode(array('error' => true, 'redirect' => CController::createUrl('site/login') ));
+        if (Yii::app()->user->isGuest) {
+            echo json_encode(array('error' => true, 'redirect' => CController::createUrl('site/login')));
             return;
         }
 
@@ -247,19 +248,18 @@ class PostController extends Controller {
                 $userId = Yii::app()->user->id;
                 $action = $_POST['crAction'];
 
-                if($action == 'voteCommentUp')
+                if ($action == 'voteCommentUp')
                     $voteUp = true;
                 else
                     $voteUp = false;
 
-              //  $comment = Comment::model()->findByPk($commentId)
+                //  $comment = Comment::model()->findByPk($commentId)
 
-              $success =   Comment::model()->addVote($commentId, $voteUp);
-              if(!$success)
-                  echo json_encode(array('error' => true));
-              else
-                  echo json_encode(array('error' => false));
-
+                $success = Comment::model()->addVote($commentId, $voteUp);
+                if (!$success)
+                    echo json_encode(array('error' => true));
+                else
+                    echo json_encode(array('error' => false));
             }
         }
     }
@@ -281,49 +281,47 @@ class PostController extends Controller {
     /**
      * Enter here when filtering the vendor/family/micro
      */
-    public function actionFilter(){
+    public function actionFilter() {
         //if (isset($_POST['ajax'])){
-        if (true){
+        if (false) {
             // Get the family data
-            $family = Family::model()->findAll('vendorId=:vendorId',
-                    array(':vendorId' => (int) $_POST['vendorId']));
-            $family = CHtml::listData($family,'id','name');
+            $family = Family::model()->findAll('vendorId=:vendorId', array(':vendorId' => (int) $_POST['vendorId']));
+            $family = CHtml::listData($family, 'id', 'name');
 
             //Create the dropdown for family
-            $familyId = (int)$_POST['familyId'];
-            if($familyId == '')
+            $familyId = (int) $_POST['familyId'];
+            if ($familyId == '')
                 $familyDropDown = '<option value="" selected="selected"></option>';
             else
                 $familyDropDown = '<option value=""></option>';
-            foreach($family as $id=>$name){
-                if(!($id == $familyId))
-                    $familyDropDown .= CHtml::tag('option', array('value'=>$id),CHtml::encode($name),true);
+            foreach ($family as $id => $name) {
+                if (!($id == $familyId))
+                    $familyDropDown .= CHtml::tag('option', array('value' => $id), CHtml::encode($name), true);
                 else
-                    $familyDropDown .= CHtml::tag('option', array('value'=>$id, 'selected' => '"selected"'),CHtml::encode($name),true);
+                    $familyDropDown .= CHtml::tag('option', array('value' => $id, 'selected' => '"selected"'), CHtml::encode($name), true);
             }
 
             // Create the dropdown for Micro
-            $microId = (int)$_POST['microId'];
-            if($microId == '')
+            $microId = (int) $_POST['microId'];
+            if ($microId == '')
                 $microDropDown = '<option value="" selected="selected"></option>';
             else
                 $microDropDown = '<option value=""></option>';
-            $micro = Micro::model()->findAll('familyId=:familyId',
-                    array(':familyId' => (int) $_POST['familyId']));
-            $micro = CHtml::listData($micro,'id','name');
+            $micro = Micro::model()->findAll('familyId=:familyId', array(':familyId' => (int) $_POST['familyId']));
+            $micro = CHtml::listData($micro, 'id', 'name');
 
             //Create the dropdown for micro
-            foreach($micro as $id=>$name){
-                if(!($id == $microId))
-                    $microDropDown .= CHtml::tag('option', array('value'=>$id),CHtml::encode($name),true);
+            foreach ($micro as $id => $name) {
+                if (!($id == $microId))
+                    $microDropDown .= CHtml::tag('option', array('value' => $id), CHtml::encode($name), true);
                 else
-                    $microDropDown .= CHtml::tag('option', array('value'=>$id, 'selected' => '"selected"'),CHtml::encode($name),true);
+                    $microDropDown .= CHtml::tag('option', array('value' => $id, 'selected' => '"selected"'), CHtml::encode($name), true);
             }
 
 
             echo CJSON::encode(array(
-              'family'=>$familyDropDown,
-              'micro'=>$microDropDown,
+                'family' => $familyDropDown,
+                'micro' => $microDropDown,
             ));
         }
     }
