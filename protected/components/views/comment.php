@@ -4,9 +4,9 @@
             <li class="vote-up">
                 <?php
                 if ($comment->hasVotedUp())
-                    $class = 'icon-thumbs-up active';
+                    $class = 'fa fa-thumbs-up active';
                 else
-                    $class = 'icon-thumbs-up-alt';
+                    $class = 'fa fa-thumbs-o-up';
                 ?>
                 <?php
                 echo CHtml::ajaxLink('<span>' . $comment->voteUpCount . '</span>' . CHtml::tag('i', array('class' => $class . ' icon-1x'), ''), Yii::app()->createUrl('post/vote'), array(
@@ -15,7 +15,7 @@
                         'crAction' => 'voteCommentUp',
                         'commentId' => $comment->id,
                     ),
-                    'success' => "function(data){ activateThumbs($comment->id, 'up', data)}",
+                    'success' => "function(data){ activateThumbs({$comment->id}, 'up', data)}",
                         ), array('title' => 'Vote Up', 'style' => 'text-decoration: none')
                 );
                 ?>
@@ -23,9 +23,9 @@
             <li class="vote-down">
                 <?php
                 if ($comment->hasVotedDown())
-                    $class = 'icon-thumbs-down active';
+                    $class = 'fa fa-thumbs-down active';
                 else
-                    $class = 'icon-thumbs-down-alt';
+                    $class = 'fa fa-thumbs-o-down';
                 ?>
                 <?php
                 echo CHtml::ajaxLink('<span>' . $comment->voteDownCount . '</span>' . CHtml::tag('i', array('class' => $class . ' icon-1x'), ''), Yii::app()->createUrl('post/vote'), array(
@@ -34,7 +34,7 @@
                         'crAction' => 'voteCommentDown',
                         'commentId' => $comment->id,
                     ),
-                    'success' => "function(data){ activateThumbs($comment->id, 'down', data)}",
+                    'success' => "function(data){ activateThumbs({$comment->id}, 'down', data)}",
                         ), array('title' => 'Vote Down', 'style' => 'text-decoration: none')
                 );
                 ?>
@@ -47,7 +47,7 @@
                         'crAction' => 'voteComment',
                         'commentId' => $comment->id,
                     ),
-                  //  'update' => '#test' 
+                  //  'update' => '#test'
                   //      ), array('title' => 'Report This', 'style' => 'text-decoration: none')
                 ));
                 ?>
