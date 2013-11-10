@@ -6,7 +6,8 @@
 
 <div class="form">
 
-<?php $form=$this->beginWidget('CActiveForm', array(
+<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+        'layout' => TbHtml::FORM_LAYOUT_HORIZONTAL,
 	'id'=>'comment-form',
 	'enableAjaxValidation'=>false,
 )); ?>
@@ -16,9 +17,9 @@
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="row-fluid">
-		<?php echo $form->labelEx($model,'content'); ?>
-		<?php echo $form->textArea($model,'content',array('rows'=>6, 'cols'=>50, 'class' => 'span7')); ?>
-		<?php echo $form->error($model,'content'); ?>
+		<?php // echo $form->labelEx($model,'content'); ?>
+		<?php echo $form->textAreaControlGroup($model,'content',array('rows'=>6, 'cols'=>50, 'class' => 'span7')); ?>
+		<?php // echo $form->error($model,'content'); ?>
 	</div>
 
 	<!--<div class="row-fluid">-->
@@ -29,11 +30,7 @@
 
         <div class="form-actions">
             <?php
-            $this->widget('bootstrap.widgets.TbButton', array(
-                'buttonType' => 'submit',
-                'type' => 'primary',
-                'label' => $model->isNewRecord ? 'Create' : 'Save',
-            ));
+            echo TbHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array('color' => TbHtml::BUTTON_COLOR_PRIMARY));
             ?>
         </div>
 

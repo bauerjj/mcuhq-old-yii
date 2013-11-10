@@ -10,6 +10,8 @@ $this->menu=array(
 );
 ?>
 
-<h1>Create Post</h1>
+<div class ="main-title">
+<h1>Submit Content</h1>
+</div> 
 
 <?php echo $this->renderPartial('_form', array('model'=>$model)); ?>
