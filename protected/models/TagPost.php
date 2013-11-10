@@ -85,12 +85,12 @@ class TagPost extends CActiveRecord {
     }
 
     // CUSTOM for the esaverelatedbehavior extension
-    public function behaviors() {
-        return array(
-            'withRelated' => array(
-                'class' => 'ext.wr.WithRelatedBehavior',
-            ),
-        );
-    }
+//    public function behaviors() {
+//        return array(
+//            'withRelated' => array(
+//                'class' => 'ext.wr.WithRelatedBehavior',
+//            ),
+//        );
+//    }
 
 }
