@@ -1,5 +1,7 @@
 <?php
 $this->breadcrumbs = array(
+    'tutorial' => array('#'),
+    'STMicro' => array('#'),
     $model->category->name => array('index'),
     $model->title,
 );
@@ -17,7 +19,7 @@ if (Yii::app()->user->name == 'admin') {
 
 // Add article info
 $this->beginClip('articleInfo');
-$this->beginWidget('bootstrap.widgets.TbBox', array(
+$this->beginWidget('yiiwheels.widgets.box.WhBox', array(
     'title' => 'Article',
     'headerIcon' => 'book',
     'htmlOptions' => array('class' => 'article-info')
@@ -29,11 +31,11 @@ $this->beginWidget('bootstrap.widgets.TbBox', array(
         <td>
             <div class="vote-box">
                 <div>
-                    <i class="icon-chevron-up vote-up " title="+1 Vote Up"></i>
+                    <i class="fa fa-chevron-up vote-up " title="+1 Vote Up"></i>
                 </div>
                 <div id="voteCount" title="Number of user votes (likes)" style="color:#737373; text-align: center;">5</div>
                 <div>
-                    <i class="icon-chevron-down vote-down " title="-1 Vote Down"></i>
+                    <i class="fa fa-chevron-down vote-down " title="-1 Vote Down"></i>
                 </div>
             </div>
         </td>
@@ -112,7 +114,7 @@ If you have any questions, please ask in the '.CHtml::link('forum',array('/forum
             'closeText' => '&times;', // false equals no close link
             'events' => array(),
             'htmlOptions' => array(),
-            'userComponentId' => 'user',
+           // 'userComponentId' => 'user',
             'alerts' => array(// configurations per alert type
                 // success, info, warning, error or danger
                 'warning' => array('block' => true, 'closeText' => false),
