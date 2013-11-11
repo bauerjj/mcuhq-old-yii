@@ -1,6 +1,6 @@
 <?php /* @var $this Controller */ ?>
 <?php $this->beginContent('//layouts/main'); ?>
-<div class="container-fluid fill">
+<!--<div class="container-fluid fill">-->
     <div class="row-fluid">
         <div class="fixed-sidebar">
             <?php
@@ -30,10 +30,11 @@
             ));
             ?>
             <?php
-            $this->beginWidget('bootstrap.widgets.TbBox', array(
+            $this->beginWidget('yiiwheels.widgets.box.WhBox', array(
                 'title' => 'Operations',
             ));
-            $this->widget('bootstrap.widgets.TbMenu', array(
+            $this->widget('bootstrap.widgets.TbNav', array(
+                'type' => TbHtml::NAV_TYPE_LIST,
                 'items' => $this->menu,
                 'htmlOptions' => array('class' => 'operations'),
             ));
@@ -46,5 +47,5 @@
             </div><!-- content -->
         </div>
     </div>
-</div>
+<!--</div>-->
 <?php $this->endContent(); ?>
