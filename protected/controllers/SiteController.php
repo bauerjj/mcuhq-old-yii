@@ -2,7 +2,34 @@
 
 class SiteController extends Controller {
 
-    public $layout='main';
+    public $layout = 'main';
+
+
+    public function filters() {
+        return array(
+            'accessControl', // perform access control
+        );
+    }
+
+
+    /**
+     * Specifies the access control rules.
+     * This method is used by the 'accessControl' filter.
+     * @return array access control rules
+     */
+    public function accessRules() {
+        return array(
+            array('allow', // allow
+                // The 'Page' action allows static pages to be viewed. \
+                // 'captcha' is also called to display the captcha image
+                'actions' => array('page','about', 'contact', 'security', 'captcha'),
+                'users' => array('*'),
+            ),
+            array('deny', // deny the rest
+                'users' => array('*'),
+            ),
+        );
+    }
 
     /**
      * Declares class-based actions.
@@ -16,45 +43,17 @@ class SiteController extends Controller {
             ),
             // page action renders "static" pages stored under 'protected/views/site/pages'
             // They can be accessed via: index.php?r=site/page&view=FileName
+            // The 'about' and 'security' page are static
             'page' => array(
                 'class' => 'CViewAction',
             ),
         );
-
-
     }
 
-    /**
-     * @return array action filters
-     */
-    public function filters() {
+    public function actionForums() {
+
+        $this->render('index');
     }
-
-    public function actionList() {
-        $criteria = new CDbCriteria;
-        $criteria->with = array(
-            'with' =>
-            'user',
-            'tags',
-            'status'
-        );
-
-
-        $dataProvider = new CActiveDataProvider('Post', array(
-            'pagination' => array(
-                'pageSize' => Yii::app()->params['postsPerPage'],
-            ),
-            'criteria' => $criteria,
-        ));
-        $this->render('index', array(
-            'dataProvider' => $dataProvider,
-        ));
-    }
-
-	public function actionForums(){
-
-		$this->render('index');
-	}
 
     /**
      * This is the default 'index' action that is invoked
@@ -62,7 +61,7 @@ class SiteController extends Controller {
      */
     public function actionIndex() {
 
-      //  $this->actionList();
+        //  $this->actionList();
         // renders the view file 'protected/views/site/index.php'
         // using the default layout 'protected/views/layouts/main.php'
         $this->render('index');
@@ -102,36 +101,5 @@ class SiteController extends Controller {
         }
         $this->render('contact', array('model' => $model));
     }
-
-    /**
-     * Displays the login page
-     */
-//    public function actionLogin() {
-//        $model = new LoginForm;
-//
-//        // if it is ajax validation request
-//        if (isset($_POST['ajax']) && $_POST['ajax'] === 'login-form') {
-//            echo CActiveForm::validate($model);
-//            Yii::app()->end();
-//        }
-//
-//        // collect user input data
-//        if (isset($_POST['LoginForm'])) {
-//            $model->attributes = $_POST['LoginForm'];
-//            // validate user input and redirect to the previous page if valid
-//            if ($model->validate() && $model->login())
-//                $this->redirect(Yii::app()->user->returnUrl);
-//        }
-//        // display the login form
-//        $this->render('login', array('model' => $model));
-//    }
-//
-//    /**
-//     * Logs out the current user and redirect to homepage.
-//     */
-//    public function actionLogout() {
-//        Yii::app()->user->logout();
-//        $this->redirect(Yii::app()->homeUrl);
-//    }
 
 }
