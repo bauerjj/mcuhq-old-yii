@@ -47,11 +47,7 @@ $this->breadcrumbs=array(
 
 	<div class="row-fluid submit">
             <?php
-                $this->widget('bootstrap.widgets.TbButton', array(
-                    'buttonType' => 'submit',
-                    'type' => 'primary',
-                    'label' => UserModule::t("Login"),
-                ));
+            echo TbHtml::submitButton(UserModule::t("Login"), array('color' => TbHtml::BUTTON_COLOR_PRIMARY));
                 ?>
 	</div>
 
