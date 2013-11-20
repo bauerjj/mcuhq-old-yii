@@ -22,7 +22,7 @@ $this->breadcrumbs=array(
 
 	<p class="note"><?php echo UserModule::t('Fields with <span class="required">*</span> are required.'); ?></p>
 
-	<?php echo CHtml::errorSummary($model); ?>
+	<?php echo CHtml::errorSummary($model, null, null, array('class'=> 'alert alert-block alert-error')); ?>
 
 	<div class="row-fluid">
 		<?php echo CHtml::activeLabelEx($model,'username'); ?>
